@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ninehr_portal
+      POSTGRES_USER: ninehr_app
+      POSTGRES_PASSWORD: ${SQL_PASSWORD:-change_me_in_production}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ninehr_app -d ninehr_portal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  portal:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      APP_URL: ${APP_URL:-https://portal.9hrindia.com}
+      SQL_HOST: postgres
+      SQL_DB_NAME: ninehr_portal
+      SQL_USER: ninehr_app
+      SQL_PASSWORD: ${SQL_PASSWORD:-change_me_in_production}
+      SQL_ADMIN_USER: ninehr_app
+      SQL_ADMIN_PASSWORD: ${SQL_PASSWORD:-change_me_in_production}
+      SESSION_SECRET: ${SESSION_SECRET}
+      FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY}
+      DOWNLOAD_TOKEN_SECRET: ${DOWNLOAD_TOKEN_SECRET}
+    volumes:
+      - encrypted_docs:/app/storage/encrypted_docs
+
+volumes:
+  pgdata:
+  encrypted_docs:

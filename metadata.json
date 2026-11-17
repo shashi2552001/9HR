@@ -1,0 +1,6 @@
+{
+  "name": "9HR India Enterprise HRMS & Recruitment Portal",
+  "description": "Enterprise HRMS, Recruitment Lifecycle Management, and Candidate Onboarding Portal for 9HR India Private Limited.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
